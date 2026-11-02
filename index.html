@@ -1,311 +1,93 @@
 <!doctype html>
 <html lang="zh-Hant-TW">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#080d16">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="長輩大字時鐘">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
-  <title>長輩大字時鐘</title>
-
-  <style>
-    :root{
-      color-scheme:dark;
-      font-family:-apple-system,BlinkMacSystemFont,'PingFang TC','Microsoft JhengHei',sans-serif;
-      background:#080d16;
-      color:white;
-    }
-
-    *{box-sizing:border-box}
-
-    html,body{
-      margin:0;
-      width:100%;
-      min-height:100%;
-      background:#080d16;
-    }
-
-    body{
-      min-height:100svh;
-      padding:
-        calc(env(safe-area-inset-top) + 12px)
-        14px
-        calc(env(safe-area-inset-bottom) + 14px);
-    }
-
-    main{
-      width:min(100%,1200px);
-      margin:0 auto;
-      min-height:calc(100svh - 26px);
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-    }
-
-    .display{
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      flex:1;
-    }
-
-    .panel{
-      border-radius:24px;
-      background:#101826;
-      padding:22px 18px;
-    }
-
-    .clock-panel{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-    }
-
-    .calendar-panel{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      gap:20px;
-    }
-
-    .time{
-      font-variant-numeric:tabular-nums;
-      font-weight:800;
-      letter-spacing:-0.06em;
-      line-height:1;
-      font-size:clamp(92px,22vw,220px);
-      white-space:nowrap;
-    }
-
-    .date{
-      font-size:clamp(34px,8vw,64px);
-      font-weight:800;
-      line-height:1.2;
-    }
-
-    .weekday{
-      font-size:clamp(34px,8vw,64px);
-      font-weight:800;
-      line-height:1.2;
-    }
-
-    .lunar{
-      font-size:clamp(32px,7vw,58px);
-      font-weight:700;
-      color:#ffe5a2;
-      line-height:1.3;
-    }
-
-    .ctrl{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:center;
-      margin-top:16px;
-    }
-
-    button{
-      border:1px solid #435365;
-      border-radius:12px;
-      padding:10px 14px;
-      font-size:16px;
-      color:white;
-      background:#1d2b3d;
-    }
-
-    button:active{
-      background:#3a536f;
-    }
-
-    .hint{
-      font-size:13px;
-      color:#b4c1d0;
-      min-height:1.5em;
-      margin-top:10px;
-      text-align:center;
-    }
-
-    .large .date{font-size:clamp(40px,9vw,72px)}
-    .large .weekday{font-size:clamp(40px,9vw,72px)}
-    .large .lunar{font-size:clamp(38px,8vw,66px)}
-
-    @media (orientation:landscape){
-      .display{
-        flex-direction:row;
-        align-items:stretch;
-      }
-
-      .clock-panel,
-      .calendar-panel{
-        width:50%;
-        min-height:62vh;
-      }
-
-      .time{
-        font-size:clamp(120px,16vw,260px);
-      }
-
-      .date{
-        font-size:clamp(34px,4vw,64px);
-      }
-
-      .weekday{
-        font-size:clamp(34px,4vw,64px);
-      }
-
-      .lunar{
-        font-size:clamp(30px,3.6vw,54px);
-      }
-    }
-
-    @media (max-height:640px) and (orientation:portrait){
-      .time{font-size:19vw}
-      .date,.weekday,.lunar{font-size:7vw}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#080d16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="長輩大字時鐘">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
+<title>長輩大字時鐘</title>
+<style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei",sans-serif;background:#080d16;color:#fff}
+*{box-sizing:border-box}
+html,body{width:100%;min-height:100%;margin:0}
+body{min-height:100svh;padding:calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 10px) calc(env(safe-area-inset-bottom) + 8px) calc(env(safe-area-inset-left) + 10px)}
+main{min-height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px);display:flex;flex-direction:column;gap:8px}
+.display{display:grid;grid-template-columns:1fr;grid-template-rows:1fr 1fr;flex:1;min-height:0;gap:8px}
+.panel{background:#101826;border-radius:18px;min-width:0;min-height:0;display:flex;justify-content:center;align-items:center;padding:12px;text-align:center}
+.time{font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.055em;line-height:1;white-space:nowrap;font-size:clamp(74px,19vw,190px)}
+.calendar{flex-direction:column;gap:clamp(6px,2vh,18px)}
+.date,.weekday{font-size:clamp(32px,8vw,68px);font-weight:800;line-height:1.15}
+.lunar{font-size:clamp(29px,7vw,56px);font-weight:750;line-height:1.2;color:#ffe5a2}
+.controls{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+button{border:1px solid #425267;background:#1d2b3d;color:#fff;font-size:14px;border-radius:10px;padding:7px 12px}
+.note{font-size:11px;line-height:1.2;text-align:center;color:#aebbc9}
+@media (orientation:landscape){
+  .display{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+  .time{font-size:clamp(60px,12vw,170px)}
+  .date,.weekday{font-size:clamp(28px,5.8vh,60px)}
+  .lunar{font-size:clamp(24px,5.2vh,52px)}
+  .calendar{gap:clamp(4px,2.5vh,18px)}
+}
+@media (orientation:landscape) and (max-width:720px){.time{font-size:clamp(48px,10.8vw,94px)}.date,.weekday{font-size:clamp(23px,6vh,44px)}.lunar{font-size:clamp(22px,5.2vh,40px)}}
+@media (max-height:380px) and (orientation:landscape){.controls button{padding:3px 9px;font-size:12px}.note{display:none}.calendar{gap:5px}}
+.large .date,.large .weekday{font-size:clamp(32px,7.3vh,75px)}
+.large .lunar{font-size:clamp(29px,6.5vh,66px)}
+</style>
 </head>
-
 <body>
-  <main id="clock" aria-live="off">
-    <div class="display">
-      <section class="panel clock-panel">
-        <div id="time" class="time">--:--</div>
-      </section>
-
-      <section class="panel calendar-panel">
-        <div class="date" id="date">國曆讀取中</div>
-        <div class="weekday" id="weekday"></div>
-        <div class="lunar" id="lunar">農曆讀取中</div>
-      </section>
-    </div>
-
-    <div class="ctrl">
-      <button id="font">字體放大</button>
-      <button id="seconds">顯示秒數：關</button>
-    </div>
-
-    <div id="hint" class="hint">請將 iPhone「自動鎖定」設為「永不」，才能持續顯示</div>
-  </main>
-
-  <script>
-    const zone='Asia/Taipei',
-          digits=['〇','一','二','三','四','五','六','七','八','九'],
-          monthNames=['正','二','三','四','五','六','七','八','九','十','冬','臘'];
-
-    const p=(n)=>String(n).padStart(2,'0');
-    let showSeconds=false;
-    let big=false;
-
-    const parts=(fmt,d)=>Object.fromEntries(
-      fmt.formatToParts(d)
-        .filter(x=>x.type!=='literal')
-        .map(x=>[x.type,x.value])
-    );
-
-    const greg=new Intl.DateTimeFormat('zh-TW-u-ca-gregory',{
-      timeZone:zone,
-      month:'numeric',
-      day:'numeric',
-      weekday:'long'
-    });
-
-    const lunarFmt=new Intl.DateTimeFormat('zh-TW-u-ca-chinese',{
-      timeZone:zone,
-      year:'numeric',
-      month:'numeric',
-      day:'numeric'
-    });
-
-    const clockFmt=new Intl.DateTimeFormat('en-GB',{
-      timeZone:zone,
-      hour:'2-digit',
-      minute:'2-digit',
-      second:'2-digit',
-      hourCycle:'h23'
-    });
-
-    function lunarText(date){
-      const lp=parts(lunarFmt,date);
-      let mon=lp.month;
-      let day=lp.day;
-      let namedMonth=mon;
-
-      if(/^\d+$/.test(mon)){
-        const m=Number(mon);
-        namedMonth=monthNames[m-1]||mon;
-      }else{
-        const matched=mon.match(/\d+/);
-        if(matched){
-          namedMonth=monthNames[Number(matched[0])-1]||mon;
-          if(/bis|leap|閏/i.test(mon)) namedMonth='閏'+namedMonth;
-        }
-      }
-
-      if(!namedMonth.endsWith('月')) namedMonth+='月';
-
-      let dayTxt=day;
-      if(/^\d+$/.test(day)){
-        const n=Number(day);
-        dayTxt =
-          n===10 ? '初十' :
-          n===20 ? '二十' :
-          n===30 ? '三十' :
-          (n<11 ? '初' : n<20 ? '十' : '廿') + (n%10 ? digits[n%10] : '');
-      }
-
-      return namedMonth + dayTxt;
-    }
-
-    function render(){
-      const now=new Date();
-      const g=parts(greg,now);
-      const t=parts(clockFmt,now);
-
-      document.getElementById('time').textContent =
-        t.hour + ':' + t.minute + (showSeconds ? ':' + t.second : '');
-
-      document.getElementById('date').textContent =
-        g.month + '月' + g.day + '日';
-
-      document.getElementById('weekday').textContent =
-        g.weekday;
-
-      try{
-        document.getElementById('lunar').textContent =
-          '農曆 ' + lunarText(now);
-      }catch(e){
-        document.getElementById('lunar').textContent = '農曆暫無法顯示';
-      }
-    }
-
-    document.getElementById('font').onclick=()=>{
-      big=!big;
-      document.body.classList.toggle('large',big);
-      document.getElementById('font').textContent = big ? '恢復字體' : '字體放大';
-    };
-
-    document.getElementById('seconds').onclick=()=>{
-      showSeconds=!showSeconds;
-      document.getElementById('seconds').textContent='顯示秒數：'+(showSeconds?'開':'關');
-      render();
-    };
-
-    render();
-    setInterval(render,1000);
-
-    document.addEventListener('visibilitychange',()=>{
-      if(!document.hidden) render();
-    });
-
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('./sw.js').catch(()=>{});
-    }
-  </script>
+<main>
+  <div class="display">
+    <section class="panel"><div class="time" id="time">--:--</div></section>
+    <section class="panel calendar">
+      <div id="date" class="date">載入日期中</div>
+      <div id="weekday" class="weekday"></div>
+      <div id="lunar" class="lunar">載入農曆中</div>
+    </section>
+  </div>
+  <div class="controls">
+    <button id="font" type="button">字體放大</button>
+    <button id="seconds" type="button">顯示秒數：關</button>
+  </div>
+  <div class="note">長時間顯示需讓 iPhone 保持螢幕喚醒；此 App 不會在鎖定後繼續顯示。</div>
+</main>
+<script>
+const tz='Asia/Taipei';
+const greg=new Intl.DateTimeFormat('zh-TW-u-ca-gregory',{timeZone:tz,month:'numeric',day:'numeric',weekday:'long'});
+const lunar=new Intl.DateTimeFormat('zh-TW-u-ca-chinese',{timeZone:tz,month:'long',day:'numeric'});
+const clock=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
+const parts=(f,d)=>Object.fromEntries(f.formatToParts(d).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+const nums=['零','一','二','三','四','五','六','七','八','九'];
+const months=['正','二','三','四','五','六','七','八','九','十','冬','臘'];
+let seconds=false,bigger=false;
+function lunarDay(s){
+  if(!/^\d+$/.test(s))return s;
+  const n=Number(s);if(n===10)return '初十';if(n===20)return '二十';if(n===30)return '三十';
+  if(n<1||n>30)return s;
+  return (n<11?'初':n<20?'十':'廿')+nums[n%10];
+}
+function lunarMonth(s){
+  if(/^\d+$/.test(s))return (months[Number(s)-1]||s)+'月';
+  const m=s.match(/^(\d+)(bis|leap|閏)$/i);
+  if(m)return '閏'+(months[Number(m[1])-1]||m[1])+'月';
+  return s.endsWith('月')?s:s+'月';
+}
+function render(){
+  const now=new Date(),t=parts(clock,now),g=parts(greg,now);
+  document.getElementById('time').textContent=t.hour+':'+t.minute+(seconds?':'+t.second:'');
+  document.getElementById('date').textContent=g.month+'月'+g.day+'日';
+  document.getElementById('weekday').textContent=g.weekday;
+  try{const l=parts(lunar,now);document.getElementById('lunar').textContent='農曆 '+lunarMonth(l.month)+lunarDay(l.day)}
+  catch(e){document.getElementById('lunar').textContent='農曆暫無法顯示'}
+}
+document.getElementById('font').onclick=()=>{bigger=!bigger;document.body.classList.toggle('large',bigger);document.getElementById('font').textContent=bigger?'恢復字體':'字體放大'};
+document.getElementById('seconds').onclick=()=>{seconds=!seconds;document.getElementById('seconds').textContent='顯示秒數：'+(seconds?'開':'關');render()};
+render();setInterval(render,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+// 使用新的 Service Worker；搭配新版 sw.js 讓更新優先從網路取得。
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+</script>
 </body>
 </html>
