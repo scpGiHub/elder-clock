@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-Hant-TW">
 <head>
@@ -9,75 +10,353 @@
 <meta name="apple-mobile-web-app-title" content="長輩大字時鐘">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.png">
-<title>長輩大字時鐘</title>
+<title>長輩大字時鐘 V4</title>
+
 <style>
-:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif;background:#080d16;color:#fff;-webkit-text-size-adjust:100%;text-size-adjust:100%}
-*{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;overflow:hidden}
-body{height:100svh;padding:calc(env(safe-area-inset-top) + 7px) calc(env(safe-area-inset-right) + 8px) calc(env(safe-area-inset-bottom) + 7px) calc(env(safe-area-inset-left) + 8px)}
-main,.display{height:100%;min-height:0;width:100%}
-.display{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:6px}
-.panel{background:#101826;border-radius:18px;min-width:0;min-height:0;display:flex;justify-content:center;align-items:center;padding:5px;text-align:center;overflow:hidden}
-.time{font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.055em;line-height:1;white-space:nowrap;font-size:clamp(85px,24vw,250px)}
-.calendar{flex-direction:column;gap:clamp(3px,1.2vh,12px)}
-.date,.weekday{font-size:clamp(38px,10vw,90px);font-weight:800;line-height:1.08;white-space:nowrap}
-.lunar{font-size:clamp(34px,8.7vw,80px);font-weight:750;line-height:1.12;color:#ffe5a2;white-space:nowrap}
-@media(orientation:landscape){
-  .display{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
-  .time{font-size:clamp(68px,13vw,200px)}
-  .date,.weekday{font-size:clamp(28px,8vh,69px)}
-  .lunar{font-size:clamp(25px,7vh,57px)}
-  .calendar{gap:clamp(3px,2vh,14px)}
+:root{
+  color-scheme:dark;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif;
+  background:#080d16;
+  color:#fff;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
 }
-@media (orientation:landscape) and (max-height:330px){
-  .date,.weekday{font-size:clamp(24px,7.4vh,48px)}
-  .lunar{font-size:clamp(23px,6.7vh,44px)}
+
+*{box-sizing:border-box}
+
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+}
+
+body{
+  height:100svh;
+  padding:
+    calc(env(safe-area-inset-top) + 6px)
+    calc(env(safe-area-inset-right) + 6px)
+    calc(env(safe-area-inset-bottom) + 6px)
+    calc(env(safe-area-inset-left) + 6px);
+}
+
+main,.display{
+  width:100%;
+  height:100%;
+  min-height:0;
+}
+
+/* 直放：上下各 50% */
+.display{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr) minmax(0,1fr);
+  gap:6px;
+}
+
+/* 時鐘與日曆共同面板 */
+.panel{
+  background:#101826;
+  border-radius:18px;
+  min-width:0;
+  min-height:0;
+  padding:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  overflow:hidden;
+}
+
+/* 時間 */
+.time{
+  display:inline-block;
+  width:max-content;
+  flex:none;
+  font-size:100px;
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.06em;
+  line-height:1;
+  white-space:nowrap;
+}
+
+/* 日曆垂直排列 */
+.calendar{
+  flex-direction:column;
+  gap:clamp(5px,1.4vh,14px);
+}
+
+/* 國曆與星期 */
+.date,.weekday,.lunar{
+  display:inline-block;
+  width:max-content;
+  flex:none;
+  font-size:70px;
+  white-space:nowrap;
+  line-height:1.06;
+  font-weight:800;
+}
+
+/* 農曆 */
+.lunar{
+  color:#ffe5a2;
+  font-weight:750;
+  line-height:1.12;
+  font-size:55px;
+}
+
+/* 橫放：左右各 50% */
+@media(orientation:landscape){
+  .display{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr);
+  }
+
+  .calendar{
+    gap:clamp(5px,1.5vh,12px);
+  }
 }
 </style>
 </head>
+
 <body>
 <main>
   <div class="display">
-    <section class="panel"><div class="time" id="time">--:--</div></section>
-    <section class="panel calendar">
+
+    <!-- 左側/上方：大時鐘 -->
+    <section class="panel" id="clock-panel">
+      <div id="time" class="time">--:--</div>
+    </section>
+
+    <!-- 右側/下方：日曆 -->
+    <section class="panel calendar" id="calendar-panel">
       <div id="date" class="date">載入日期中</div>
       <div id="weekday" class="weekday"></div>
       <div id="lunar" class="lunar">載入農曆中</div>
     </section>
+
   </div>
 </main>
+
 <script>
+// 台灣時間
 const tz='Asia/Taipei';
-const greg=new Intl.DateTimeFormat('zh-TW-u-ca-gregory',{timeZone:tz,month:'numeric',day:'numeric',weekday:'long'});
-const lunar=new Intl.DateTimeFormat('zh-TW-u-ca-chinese',{timeZone:tz,month:'long',day:'numeric'});
-const clock=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
-const parts=(f,d)=>Object.fromEntries(f.formatToParts(d).filter(p=>p.type!=='literal').map(p=>[p.type,p.value]));
+
+// 國曆
+const greg=new Intl.DateTimeFormat('zh-TW-u-ca-gregory',{
+  timeZone:tz,
+  month:'numeric',
+  day:'numeric',
+  weekday:'long'
+});
+
+// 農曆
+const lunar=new Intl.DateTimeFormat('zh-TW-u-ca-chinese',{
+  timeZone:tz,
+  month:'long',
+  day:'numeric'
+});
+
+// 時鐘，24小時制
+const clock=new Intl.DateTimeFormat('en-GB',{
+  timeZone:tz,
+  hour:'2-digit',
+  minute:'2-digit',
+  hourCycle:'h23'
+});
+
+const parts=(f,d)=>Object.fromEntries(
+  f.formatToParts(d)
+    .filter(p=>p.type!=='literal')
+    .map(p=>[p.type,p.value])
+);
+
 const nums=['零','一','二','三','四','五','六','七','八','九'];
 const months=['正','二','三','四','五','六','七','八','九','十','冬','臘'];
 
+const el=id=>document.getElementById(id);
+
+// 農曆日期轉中文
 function lunarDay(s){
   if(!/^\d+$/.test(s))return s;
-  const n=Number(s);if(n===10)return '初十';if(n===20)return '二十';if(n===30)return '三十';
+
+  const n=Number(s);
+
+  if(n===10)return '初十';
+  if(n===20)return '二十';
+  if(n===30)return '三十';
   if(n<1||n>30)return s;
+
   return (n<11?'初':n<20?'十':'廿')+nums[n%10];
 }
+
+// 農曆月份轉中文
 function lunarMonth(s){
-  if(/^\d+$/.test(s))return (months[Number(s)-1]||s)+'月';
+  if(/^\d+$/.test(s)){
+    return (months[Number(s)-1]||s)+'月';
+  }
+
   const m=s.match(/^(\d+)(bis|leap|閏)$/i);
-  if(m)return '閏'+(months[Number(m[1])-1]||m[1])+'月';
+
+  if(m){
+    return '閏'+(months[Number(m[1])-1]||m[1])+'月';
+  }
+
   return s.endsWith('月')?s:s+'月';
 }
-function render(){
-  const now=new Date(),t=parts(clock,now),g=parts(greg,now);
-  document.getElementById('time').textContent=t.hour+':'+t.minute;
-  document.getElementById('date').textContent=g.month+'月'+g.day+'日';
-  document.getElementById('weekday').textContent=g.weekday;
-  try{const l=parts(lunar,now);document.getElementById('lunar').textContent='農曆 '+lunarMonth(l.month)+lunarDay(l.day)}
-  catch(e){document.getElementById('lunar').textContent='農曆暫無法顯示'}
+
+// 自動放大字體，盡量填滿可用空間
+function fitFonts(){
+  const clockPanel=el('clock-panel');
+  const time=el('time');
+  const calendar=el('calendar-panel');
+
+  const date=el('date');
+  const weekday=el('weekday');
+  const moon=el('lunar');
+
+  // 時鐘：計算可容納的最大字體
+  time.style.fontSize='100px';
+
+  const baseTime=time.getBoundingClientRect();
+
+  const cw=Math.max(20,clockPanel.clientWidth-24);
+  const ch=Math.max(20,clockPanel.clientHeight-24);
+
+  const timeSize=Math.max(20,Math.min(
+    340,
+    100*cw/Math.max(1,baseTime.width),
+    100*ch/Math.max(1,baseTime.height)
+  ));
+
+  time.style.fontSize=timeSize.toFixed(1)+'px';
+
+  // 日曆：日期、星期、農曆個別計算大小
+  for(const item of [date,weekday,moon]){
+    item.style.fontSize='100px';
+  }
+
+  const dateWidth=date.getBoundingClientRect().width;
+  const weekdayWidth=weekday.getBoundingClientRect().width;
+  const lunarWidth=moon.getBoundingClientRect().width;
+
+  const w=Math.max(20,calendar.clientWidth-26);
+  const h=Math.max(20,calendar.clientHeight-30);
+
+  let regular=Math.min(
+    170,
+    100*w/Math.max(1,dateWidth,weekdayWidth)
+  );
+
+  let lunarSize=Math.min(
+    160,
+    100*w/Math.max(1,lunarWidth)
+  );
+
+  function setCalendarSizes(r,l){
+    date.style.fontSize=r.toFixed(1)+'px';
+    weekday.style.fontSize=r.toFixed(1)+'px';
+    moon.style.fontSize=l.toFixed(1)+'px';
+  }
+
+  setCalendarSizes(regular,lunarSize);
+
+  const gap=parseFloat(getComputedStyle(calendar).gap)||0;
+
+  const height=
+    date.getBoundingClientRect().height+
+    weekday.getBoundingClientRect().height+
+    moon.getBoundingClientRect().height+
+    gap*2;
+
+  // 超過面板高度時，自動縮小
+  if(height>h){
+    const factor=h/height;
+    regular*=factor;
+    lunarSize*=factor;
+    setCalendarSizes(regular,lunarSize);
+  }
 }
-render();setInterval(render,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
-// 使用新的 Service Worker；搭配新版 sw.js 讓更新優先從網路取得。
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+
+// 避免短時間重複計算
+let fitScheduled=false;
+
+function scheduleFit(){
+  if(fitScheduled)return;
+
+  fitScheduled=true;
+
+  requestAnimationFrame(()=>{
+    fitScheduled=false;
+    fitFonts();
+  });
+}
+
+// 更新時間與日期
+function render(){
+  const now=new Date();
+  const t=parts(clock,now);
+  const g=parts(greg,now);
+
+  let changed=false;
+
+  const update=(id,value)=>{
+    const node=el(id);
+
+    if(node.textContent!==value){
+      node.textContent=value;
+      changed=true;
+    }
+  };
+
+  update('time',t.hour+':'+t.minute);
+  update('date',g.month+'月'+g.day+'日');
+  update('weekday',g.weekday);
+
+  try{
+    const l=parts(lunar,now);
+
+    update(
+      'lunar',
+      '農曆 '+lunarMonth(l.month)+lunarDay(l.day)
+    );
+  }catch(e){
+    update('lunar','農曆暫無法顯示');
+  }
+
+  if(changed)scheduleFit();
+}
+
+// 啟動時鐘
+render();
+
+// 每秒檢查時間，畫面只顯示時與分
+setInterval(render,1000);
+
+// 手機旋轉時自動重新計算字體大小
+window.addEventListener('resize',scheduleFit);
+window.addEventListener('orientationchange',scheduleFit);
+
+// 從背景回到 App 時更新
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden){
+    render();
+    scheduleFit();
+  }
+});
+
+// 字型載入完成後調整
+if(document.fonts&&document.fonts.ready){
+  document.fonts.ready.then(scheduleFit);
+}
+
+// 註冊離線快取
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js',{
+    updateViaCache:'none'
+  }).then(reg=>reg.update()).catch(()=>{});
+}
 </script>
 </body>
 </html>
